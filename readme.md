@@ -1,5 +1,10 @@
 # Golang examples
 
+## Use the go module system
+Steps are following
+- `go mod init <module name>`
+- then in the code, `import <model name>/<package name>`
+
 
 Recreate some of the [GNU utilities](https://github.com/coreutils/coreutils)
 
