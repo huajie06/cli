@@ -20,20 +20,19 @@ import (
 // options = []string{"l", "a"}
 func main() {
 
-	a := flag.String("name", "default value", "description")
-	flag.Parse()
+	var CommandLine = flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 
-	// ProgName := os.Args[0]
-	// Usage := os.Args[1]
-	// Args := os.Args[2:]
-	//fmt.Println(ProgName)
-	//fmt.Println(Usage, Args)
+	if err := CommandLine.Parse(os.Args[1:]); err != nil {
+		fmt.Println("error is ", err)
+	}
 
-	//flags := make([]string)
+	_ = CommandLine.Bool("l", true, "some usage")
+	if err := CommandLine.Parse(os.Args[1:]); err != nil {
+		fmt.Println("error is ", err)
+	}
 
-	// for _, v := range Args {
-	// 	fmt.Println(v)
-	// }
+	args := CommandLine.Args()
 
-	fmt.Println(*a)
+	fmt.Println(args)
+
 }
