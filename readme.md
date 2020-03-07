@@ -10,21 +10,17 @@ This is what i have.
 ```sh
 .
 ├── cmd
-│   └── arch.go
+│   ├── arch.go
+│   └── uname.go
 ├── go.mod
+├── go.sum
 ├── main.go
-├── pkg
-│   ├── cmdparser
-│   │   └── parser.go
-│   └── color
-│       └── color.go
 └── readme.md
 ```
 `main.go` import as, so the package name needs to be the same as the folder name
 ```go
 import (
-	"coreutils/pkg/cmdparser"
-	"coreutils/pkg/color"
+	"coreutils/cmd"
 	"fmt"
 )
 ```
