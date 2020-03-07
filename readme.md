@@ -5,6 +5,30 @@ Steps are following
 - `go mod init <module name>`
 - then in the code, `import <model name>/<package name>`
 
+## The package structure need to pay attention to
+This is what i have.
+```sh
+.
+├── cmd
+│   └── arch.go
+├── go.mod
+├── main.go
+├── pkg
+│   ├── cmdparser
+│   │   └── parser.go
+│   └── color
+│       └── color.go
+└── readme.md
+```
+`main.go` import as, so the package name needs to be the same as the folder name
+```go
+import (
+	"coreutils/pkg/cmdparser"
+	"coreutils/pkg/color"
+	"fmt"
+)
+```
+
 
 Recreate some of the [GNU utilities](https://github.com/coreutils/coreutils)
 
