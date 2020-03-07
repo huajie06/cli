@@ -1,23 +1,13 @@
 package main
 
 import (
+	"coreutils/cmd"
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
-// go run main.go
-// ls => a b c
-// ls -l=true but vertical
-// ls -a=true => a b c .d
-// ls -al=true
-// ls -a -l
-
-// dat := []string{"a", "b", "c", ".d"}
-
-// cmd := "ls"
-
-// options = []string{"l", "a"}
 func main() {
 
 	var CommandLine = flag.NewFlagSet(os.Args[1], flag.ExitOnError)
@@ -32,7 +22,19 @@ func main() {
 	}
 
 	args := CommandLine.Args()
+	pgrm := strings.ToLower(args[0])
+	// params := args[1:]
+	// fmt.Println(args)
 
-	fmt.Println(args)
+	// fmt.Println("prgam is: ", pgrm)
+	// fmt.Println("options are: ", params)
 
+	switch pgrm {
+	case "arch":
+		cmd.Arch()
+	case "ls":
+		fmt.Println("ls")
+	default:
+		fmt.Println("no such program")
+	}
 }

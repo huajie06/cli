@@ -1,6 +1,10 @@
 // print machine architecture
 package cmd
 
-func Ls() {
-	//fmt.Println("hello")
+import (
+	"fmt"
+)
+
+func Arch() {
+	fmt.Println("the arch is", "some arch")
 }
