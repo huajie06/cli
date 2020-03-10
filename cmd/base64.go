@@ -24,7 +24,7 @@ func newEnc(encoder string) *encoding {
 	// dest=[0 0 0 0 0 0 0] src=[1 2 3] => [1 2 3 0 0 0 0]
 
 	for i := 0; i < len(e.decodeMap); i++ {
-		e.decodeMap[i] = 0xFF // 0xff = 255
+		e.decodeMap[i] = 0xFF // 0xff = 255, fill with 255
 	}
 
 	// string[index] => byte => uinit8
@@ -49,16 +49,21 @@ func (enc *encoding) Encode(dst, src []byte) {
 		// Convert 3x 8bit source bytes into 4 bytes
 		val := uint(src[si+0])<<16 | uint(src[si+1])<<8 | uint(src[si+2])
 		// if src[si+0] = "a", "a"
-		// 1100001 => 11000010000000000000000, add sixteen zeros
-		// 1100001 => 110000100000000, add 8 zeros
-		// 1100001 => 1100001, stays the same
+		// 01100001 => 011000010000000000000000, add sixteen zeros
+		// 01100001 =>         0110000100000000, add 8 zeros
+		// 01100001 =>                 01100001, stays the same
+		//          => 011000010110000101100001 => 68371921 in decimal
 		// use |(or), to get an overall number
 
 		dst[di+0] = enc.encode[val>>18&0x3F]
 		dst[di+1] = enc.encode[val>>12&0x3F]
 		dst[di+2] = enc.encode[val>>6&0x3F]
 		dst[di+3] = enc.encode[val&0x3F]
-
+		// 0x3f = 63 = 111111
+		// 011000                   & 111111 => 011000 => 24 => enc.encode[24]
+		// 011000010110             & 111111 => 010110 => 22 =>
+		// 011000010110000101       & 111111 => 000101 => 5  =>
+		// 011000010110000101100001 & 111111 => 100001 => 33 =>
 		si += 3
 		di += 4
 	}
