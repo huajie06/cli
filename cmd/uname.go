@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"log"
+	"os"
 
 	"golang.org/x/sys/unix"
 )
@@ -20,7 +20,7 @@ func Uname(s []string) {
 	}
 	unixName := unix.Utsname{}
 	if err := unix.Uname(&unixName); err != nil {
-		log.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 	}
 
 	sysName := bytes.Trim(unixName.Sysname[:], "\x00")
@@ -40,11 +40,11 @@ func Uname(s []string) {
 
 	for _, v := range s {
 		if _, ok := flags[v]; !(ok) {
-			fmt.Println("cmd not existed", v)
+			fmt.Fprintln(os.Stderr, "flag not exists: ", v)
 			return
 		}
 
 	}
 
-	fmt.Printf("%s%s", flags[s[0]], "\n")
+	fmt.Fprintf(os.Stdout, "%s%s", flags[s[0]], "\n")
 }

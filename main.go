@@ -4,19 +4,19 @@ import (
 	"coreutils/cmd"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 )
 
 func main() {
-	var cmdString []string
-	cmdString = []string{"abc", "bcd"}
+	// var cmdString []string
 	// cmdString = []string{"-n"}
-	//cmd.Uname(cmdString)
-	cmd.Arch()
+	// cmd.Uname(cmdString)
+	// cmd.Arch()
 
-	fmt.Println(cmdString)
-	//m()
+	// m()
+
+	cmd.Base64("a")
+
 }
 
 func m() {
@@ -33,14 +33,12 @@ func m() {
 	switch pgrm {
 	case "arch":
 		cmd.Arch()
-	case "ls":
-		fmt.Println("ls")
 	case "uname":
 		cmd.Uname(params)
 	default:
 		_, err := fmt.Fprintf(os.Stderr, "no such program: %s\n", pgrm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	}
 }

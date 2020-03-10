@@ -32,8 +32,8 @@ Recreate some of the [GNU utilities](https://github.com/coreutils/coreutils)
 - arch
 
 ## B
-- b2sum
-- base32
+- ~b2sum~
+- ~base32~
 - base64
 - basename
 - basenc
