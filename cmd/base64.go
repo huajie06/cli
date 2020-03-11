@@ -12,8 +12,12 @@ type encoding struct {
 	padChar   rune
 }
 
+// bitwise operation demo
+// https://play.golang.org/p/VeLCx_4orSW
+
 const mapEncoder = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-const NoPadding rune = -1
+
+// const NoPadding rune = -1
 
 func newEnc(encoder string) *encoding {
 	e := new(encoding)
@@ -35,12 +39,16 @@ func newEnc(encoder string) *encoding {
 	return e
 }
 
-func (enc *encoding) Encode(dst, src []byte) {
+func (enc *encoding) Encode(src []byte) []byte {
 	if len(src) == 0 {
-		return
+		return []byte{}
 	}
 
-	//_ = enc.encode
+	dst := make([]byte, (len(src)+2)/3*4)
+
+	// 1 byte = 8 bits, so everything 3`letters`/bytes = 24 bits => 4 new `blocks`
+	// everything 3 letters => 4 new letters, remaining will fill accordingly
+	// so the length will have to be `(n + 2) / 3 * 4`
 
 	di, si := 0, 0
 	n := (len(src) / 3) * 3
@@ -70,42 +78,29 @@ func (enc *encoding) Encode(dst, src []byte) {
 
 	remain := len(src) - si
 	if remain == 0 {
-		return
+		return dst
 	}
-	// Add the remaining small block
-	val := uint(src[si+0]) << 16
-	if remain == 2 {
-		val |= uint(src[si+1]) << 8
-	}
-
-	dst[di+0] = enc.encode[val>>18&0x3F]
-	dst[di+1] = enc.encode[val>>12&0x3F]
 
 	switch remain {
 	case 2:
-		dst[di+2] = enc.encode[val>>6&0x3F]
-		if enc.padChar != NoPadding {
-			dst[di+3] = byte(enc.padChar)
-		}
-	case 1:
-		if enc.padChar != NoPadding {
-			dst[di+2] = byte(enc.padChar)
-			dst[di+3] = byte(enc.padChar)
-		}
-	}
-}
 
-func (enc *encoding) EncodedLen(n int) int {
-	if enc.padChar == NoPadding {
-		return (n*8 + 5) / 6 // minimum # chars at 6 bits per char
+		val := uint(src[si+0])<<10 | uint(src[si+1])<<2
+		dst[di+0] = enc.encode[val>>12&0x3f]
+		dst[di+1] = enc.encode[val>>6&0x3F]
+		dst[di+2] = enc.encode[val&0x3F]
+		dst[di+3] = byte(enc.padChar)
+	case 1:
+		val := uint(src[si+0]) << 4
+		dst[di+0] = enc.encode[val>>6&0x3f]
+		dst[di+1] = enc.encode[val&0x3F]
+		dst[di+2] = byte(enc.padChar)
+		dst[di+3] = byte(enc.padChar)
 	}
-	return (n + 2) / 3 * 4 // minimum # 4-char quanta, 3 bytes each
+	return dst
 }
 
 func Base64(s string) {
 	e := newEnc(mapEncoder)
-	buf := make([]byte, e.EncodedLen(len([]byte(s))))
-	e.Encode(buf, []byte(s))
-
-	fmt.Println(string(buf))
+	r := e.Encode([]byte(s))
+	fmt.Println(string(r))
 }
