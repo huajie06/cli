@@ -8,7 +8,7 @@ import "fmt"
 
 type encoding struct {
 	encodeMap [64]byte
-	decodeMap [256]byte
+	decodeMap map[uint]uint
 	padChar   rune
 }
 
@@ -25,14 +25,18 @@ func newEnc(encoder string) *encoding {
 	// by using copy(dest, src []Type), slice[:] <=> string
 	// dest=[0 0 0 0 0 0 0] src=[1 2 3] => [1 2 3 0 0 0 0]
 
-	for i := 0; i < len(e.decodeMap); i++ {
-		e.decodeMap[i] = 0xFF // 0xff = 255, fill with 255
-	}
+	// for i := 0; i < len(e.decodeMap); i++ {
+	// 	e.decodeMap[i] = 0xFF // 0xff = 255, fill with 255
+	// }
 
 	// string[index] => byte => uinit8
 	// "abc"[0] => 97
-	for i := 0; i < len(encoder); i++ {
-		e.decodeMap[encoder[i]] = byte(i)
+	// for i := 0; i < len(encoder); i++ {
+	// 	e.decodeMap[encoder[i]] = byte(i)
+	// }
+	e.decodeMap = map[uint]uint{}
+	for i, v := range mapEncoder {
+		e.decodeMap[uint(v)] = uint(i)
 	}
 	return e
 }
@@ -105,6 +109,7 @@ func Base64(s string) {
 	fmt.Println(string(r))
 }
 
+// decode is not bullet proof, needs to think of some error handling logic.
 func (enc *encoding) decode(src []byte) []byte {
 	// 1. trim suffix ==, and count
 	// 2. determine the return length, (#n*6 -#=*2) / 8. yq== 2*6-2*2 = 1
@@ -123,19 +128,23 @@ func (enc *encoding) decode(src []byte) []byte {
 		npad += 1
 	}
 
-	dst := make([]byte, ((l-npad)*6-(npad*2))/8)
+	dst := make([]uint8, ((l-npad)*6-(npad*2))/8)
+	// dst := make([]byte, ((l-npad)*6-(npad*2))/8)
 
 	si, di := 0, 0
 	n := (l - npad) / 4 * 4
 	for si < n {
-		val := uint(src[si+0])<<18 | uint(src[si+1])<<12 | uint(src[si+2])<<6 | uint(src[si+0])
-		dst[di+0] = enc.decodeMap[val>>16&0x3F]
-		dst[di+1] = enc.decodeMap[val>>8&0x3F]
-		dst[di+2] = enc.decodeMap[val&0x3F]
-
+		val := enc.decodeMap[uint(src[si+0])]<<18 | enc.decodeMap[uint(src[si+1])]<<12 | enc.decodeMap[uint(src[si+2])]<<6 | enc.decodeMap[uint(src[si+3])]
+		dst[di+0] = uint8(val >> 16 & 0xFF)
+		dst[di+1] = uint8(val >> 8 & 0xFF)
+		dst[di+2] = uint8(val & 0xFF)
 		si += 4
 		di += 3
 	}
+	// YQ==
+	// l = 4, npad=2
+	// n = 0
+	// remain = 2
 	remain := l - npad - si
 
 	if remain == 0 {
@@ -144,13 +153,12 @@ func (enc *encoding) decode(src []byte) []byte {
 
 	switch remain {
 	case 3:
-		val := uint(src[si+0]<<10) | uint(src[si+1]<<4) | uint(src[si+2]>>2)
-		dst[di+0] = enc.decodeMap[val>>8&0x3F]
-		dst[di+1] = enc.decodeMap[val&0x3F]
+		val := enc.decodeMap[uint(src[si+0])]<<12 | enc.decodeMap[uint(src[si+1])]<<6 | enc.decodeMap[uint(src[si+2])]
+		dst[di+0] = uint8(val >> 10 & 0xFF)
+		dst[di+1] = uint8(val >> 2 & 0xFF)
 	case 2:
-		val := uint(src[si+0]<<2) | uint(src[si+1]>>4)
-		dst[di+0] = enc.decodeMap[val]
+		val := enc.decodeMap[uint(src[si+0])]<<2 | enc.decodeMap[uint(src[si+1])]>>4
+		dst[di+0] = uint8(val)
 	}
-
 	return dst
 }

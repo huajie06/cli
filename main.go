@@ -16,7 +16,9 @@ func main() {
 	// m()
 
 	// cmd.Base64("helloworld today is a good day")
-	cmd.Base64("YQ==")
+	cmd.Base64("aGVsbG93aGF0aGVmdWNrLHNka2Zqa2p3ZWYueWVhaCEhIQ==")
+	// cmd.Base64("YWE=")
+	//cmd.Base64("YWFh")
 }
 
 func m() {
