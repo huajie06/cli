@@ -25,15 +25,6 @@ func newEnc(encoder string) *encoding {
 	// by using copy(dest, src []Type), slice[:] <=> string
 	// dest=[0 0 0 0 0 0 0] src=[1 2 3] => [1 2 3 0 0 0 0]
 
-	// for i := 0; i < len(e.decodeMap); i++ {
-	// 	e.decodeMap[i] = 0xFF // 0xff = 255, fill with 255
-	// }
-
-	// string[index] => byte => uinit8
-	// "abc"[0] => 97
-	// for i := 0; i < len(encoder); i++ {
-	// 	e.decodeMap[encoder[i]] = byte(i)
-	// }
 	e.decodeMap = map[uint]uint{}
 	for i, v := range mapEncoder {
 		e.decodeMap[uint(v)] = uint(i)
