@@ -1,6 +1,10 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 
 // in shell if you do
 // echo "a" | base64
@@ -91,13 +95,19 @@ func (enc *encoding) encode(src []byte) []byte {
 	return dst
 }
 
-func Base64(s string) {
+func Base64(s []string) {
 	e := newEnc(mapEncoder)
-	// r := e.encode([]byte(s))
-	// fmt.Println(string(r))
+	strs := strings.Join(s[1:], " ")
 
-	r := e.decode([]byte(s))
-	fmt.Println(string(r))
+	if s[0] == "-d" {
+		r := e.encode([]byte(strs))
+		fmt.Println(string(r))
+	} else if s[0] == "-e" {
+		r := e.decode([]byte(strs))
+		fmt.Println(string(r))
+	} else {
+		fmt.Fprintf(os.Stderr, "flags supported are only -d/-e")
+	}
 }
 
 // decode is not bullet proof, needs to think of some error handling logic.

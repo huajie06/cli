@@ -13,10 +13,10 @@ func main() {
 	// cmd.Uname(cmdString)
 	// cmd.Arch()
 
-	// m()
+	m()
 
 	// cmd.Base64("helloworld today is a good day")
-	cmd.Base64("aGVsbG93aGF0aGVmdWNrLHNka2Zqa2p3ZWYueWVhaCEhIQ==")
+	// cmd.Base64("aGVsbG93aGF0aGVmdWNrLHNka2Zqa2p3ZWYueWVhaCEhIQ==")
 	// cmd.Base64("YWE=")
 	//cmd.Base64("YWFh")
 }
@@ -37,6 +37,8 @@ func m() {
 		cmd.Arch()
 	case "uname":
 		cmd.Uname(params)
+	case "base64":
+		cmd.Base64(params)
 	default:
 		_, err := fmt.Fprintf(os.Stderr, "no such program: %s\n", pgrm)
 		if err != nil {
