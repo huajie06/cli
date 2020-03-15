@@ -15,7 +15,12 @@ type empty struct{}
 func Uname(s []string) {
 
 	if len(s) > 1 {
-		fmt.Println("Too many flags")
+		fmt.Fprintf(os.Stderr, "Too many flags")
+		return
+	}
+
+	if len(s) == 0 {
+		fmt.Fprintf(os.Stderr, "Please enter a flag")
 		return
 	}
 	unixName := unix.Utsname{}
