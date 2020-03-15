@@ -8,19 +8,19 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-type empty struct{}
+// type empty struct{}
 
 // uname only accept 1 flag
 
 func Uname(s []string) {
 
 	if len(s) > 1 {
-		fmt.Fprintf(os.Stderr, "Too many flags")
+		fmt.Fprintln(os.Stderr, "Too many flags")
 		return
 	}
 
 	if len(s) == 0 {
-		fmt.Fprintf(os.Stderr, "Please enter a flag")
+		fmt.Fprintln(os.Stderr, "Please enter a flag")
 		return
 	}
 	unixName := unix.Utsname{}
