@@ -39,6 +39,10 @@ func m() {
 		cmd.Uname(params)
 	case "base64":
 		cmd.Base64(params)
+	case "basename":
+		cmd.Basename(params)
+	case "cat":
+		cmd.Cat(params)
 	default:
 		_, err := fmt.Fprintf(os.Stderr, "no such program: %s\n", pgrm)
 		if err != nil {
