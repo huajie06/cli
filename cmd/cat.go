@@ -47,26 +47,33 @@ func Cat(s []string) {
 
 	switch flag {
 	case "-e":
-		continue
+		displayDollar(buf)
 	case "-n":
-		continue
+		displayLineNum(buf)
 	case "-t":
-		continue
+		displayTab(buf)
 	}
 
-	fmt.Fprintf(os.Stdout, buf.String())
-	fmt.Println(flag)
+	//fmt.Fprintf(os.Stdout, buf.String())
 }
 
-func displayDollar(b btyes.Buffer) {
-	//TODO: add $ at the end of each line
+func displayDollar(b bytes.Buffer) {
+	fmt.Fprintf(os.Stdout, "%s\n", bytes.ReplaceAll(b.Bytes(), []byte("\n"), []byte("$\n")))
 	return
 }
 
 func displayLineNum(b bytes.Buffer) {
+	lines := bytes.Split(b.Bytes(), []byte("\n"))
+	padLen := len(lines)/10 + 2
+
+	formatter := fmt.Sprintf("%%%dd  %%s\n", padLen)
+	for i, v := range lines[:len(lines)-1] {
+		fmt.Fprintf(os.Stdout, formatter, i+1, v)
+	}
 	return
 }
 
 func displayTab(b bytes.Buffer) {
+	fmt.Fprintf(os.Stdout, "%s\n", bytes.ReplaceAll(b.Bytes(), []byte("\t"), []byte("^I")))
 	return
 }
